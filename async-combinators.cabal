@@ -1,5 +1,5 @@
 name:                async-combinators
-version:             0.1.0
+version:             0.0.0
 synopsis:            Async combinators
 description:         Async combinators
 homepage:            https://github.com/serokell/async-combinators

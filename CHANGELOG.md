@@ -4,7 +4,7 @@ Change log
 async-combinators uses [PVP Versioning][1].
 The change log is available [on GitHub][2].
 
-0.1.0
+0.0.0
 =====
 
 * Initially created.
