@@ -16,16 +16,17 @@ extra-source-files:  CHANGELOG.md
 
 cabal-version:       >=1.10
 tested-with:         GHC == 8.0.2
+                     GHC == 8.2.2
 
 library
   hs-source-dirs:      src
   exposed-modules:     Async.Combinators
   ghc-options:         -Wall
-  build-depends:       base >= 4.7 && <5
-                     , async
-                     , safe-exceptions
-                     , universum
-                     , unliftio-core
+  build-depends:       base            >= 4.7 && < 5
+                     , async           >= 2.1 && < 2.2
+                     , safe-exceptions >= 0.1.6 && < 0.2
+                     , universum       >= 1.1.0 && < 1.2
+                     , unliftio-core   == 0.1.1.0
   default-language:    Haskell2010
   default-extensions:  NoImplicitPrelude
                        OverloadedStrings
@@ -45,9 +46,10 @@ test-suite async-combinators-test
                      , hedgehog
                      , safe-exceptions
                      , tasty
-                     , tasty-discover     >= 4.1.1
+                     , tasty-discover
                      , tasty-hedgehog
                      , tasty-hunit
+  build-tool-depends:  tasty-discover:tasty-discover
   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
   default-extensions:  NoImplicitPrelude

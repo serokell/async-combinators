@@ -1,0 +1,7 @@
+resolver: lts-9.21
+
+extra-deps:
+- tasty-discover-4.1.1
+- tasty-hedgehog-0.1.0.1
+- universum-1.1.0
+- unliftio-core-0.1.1.0
