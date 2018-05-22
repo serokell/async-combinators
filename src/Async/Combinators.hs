@@ -4,16 +4,17 @@ module Async.Combinators
        , withWorker
        ) where
 
-import Universum
-
 import Control.Concurrent (myThreadId)
 import Control.Concurrent.Async (withAsync)
-import Control.Exception (asyncExceptionFromException, asyncExceptionToException)
+import Control.Exception (SomeException (..), asyncExceptionFromException,
+                          asyncExceptionToException)
 import Control.Exception.Safe (Exception (..), finally, throwTo, tryAsync)
+import Control.Monad (unless)
 import Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
+import Data.IORef (atomicWriteIORef, newIORef, readIORef)
+import Data.Text (Text)
 
-import qualified GHC.Show as Show (Show (show))
-
+import qualified Data.Text as Text
 
 -----------------------
 -- Running forever
@@ -24,8 +25,8 @@ data WorkerExited = WorkerExited Text                -- ^ Worker returned
                   | WorkerFailed Text SomeException  -- ^ Worker crashed
 
 instance Show WorkerExited where
-    show (WorkerExited n)   = toString $ "Worker '" <> n <> "' returned"
-    show (WorkerFailed n e) = toString $ "Worker '" <> n <> "' failed: " <> show e
+    show (WorkerExited n)   = "Worker '" ++ Text.unpack n ++ "' returned"
+    show (WorkerFailed n e) = "Worker '" ++ Text.unpack n ++ "' failed: " ++ show e
 
 instance Exception WorkerExited where
     toException   = asyncExceptionToException
@@ -44,7 +45,8 @@ withWorker name worker go = withRunInIO $ \run -> do
     mainDone <- newIORef False
     let worker' = do
             res <- tryAsync $ run worker
-            unlessM (readIORef mainDone) $ throwTo tid $
+            isMainDone <- readIORef mainDone
+            unless isMainDone $ throwTo tid $
                 case res of
                     Right () -> WorkerExited name
                     Left  e  -> WorkerFailed name e
