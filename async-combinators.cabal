@@ -1,5 +1,5 @@
 name:                async-combinators
-version:             0.0.0
+version:             0.0.1
 synopsis:            Async combinators
 description:         Async combinators
 homepage:            https://github.com/serokell/async-combinators
@@ -25,11 +25,10 @@ library
   build-depends:       base            >= 4.7 && < 5
                      , async           >= 2.1 && < 2.2
                      , safe-exceptions >= 0.1.6 && < 0.2
-                     , universum       >= 1.1.0 && < 1.2
+                     , text
                      , unliftio-core   == 0.1.1.0
   default-language:    Haskell2010
-  default-extensions:  NoImplicitPrelude
-                       OverloadedStrings
+  default-extensions:  OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables
 
@@ -41,7 +40,6 @@ test-suite async-combinators-test
   other-modules:       Test.Async.Combinators
   build-depends:       base >= 4.7 && <5
                      , async-combinators
-                     , universum
                      , HUnit
                      , hedgehog
                      , safe-exceptions
@@ -52,7 +50,6 @@ test-suite async-combinators-test
   build-tool-depends:  tasty-discover:tasty-discover
   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
-  default-extensions:  NoImplicitPrelude
-                       OverloadedStrings
+  default-extensions:  OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables

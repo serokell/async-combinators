@@ -1,10 +1,12 @@
 module Test.Async.Combinators where
 
-import Universum
-
-import Control.Concurrent (killThread, myThreadId, threadDelay)
+import Control.Concurrent (killThread, myThreadId, newEmptyMVar, putMVar, takeMVar, threadDelay)
 import Control.Exception (AsyncException (ThreadKilled))
-import Control.Exception.Safe (catchAny, handleAsync, isAsyncException, throw, throwTo, tryAsync)
+import Control.Exception.Safe (Exception, catch, catchAny, handleAsync, isAsyncException, throw,
+                               throwTo, tryAsync)
+import Control.Monad (forever)
+import Data.Either (isRight)
+import Data.IORef (newIORef, readIORef, writeIORef)
 
 import Test.HUnit (Assertion, assertEqual, assertFailure, (@?))
 
@@ -52,16 +54,16 @@ unit_withWorker_exception_is_async = do
     isAsyncException (WorkerExited "hi") @? "isAsync"
 
     me <- myThreadId
-    r <- tryAsync $ catchAny (throwTo me $ WorkerExited "hi") (const pass)
+    r <- tryAsync $ catchAny (throwTo me $ WorkerExited "hi") (const $ pure ())
     case r of
         Right _                  -> assertFailure $ "caught by safe `catchAny`"
-        Left (_ :: WorkerExited) -> pass
+        Left (_ :: WorkerExited) -> pure ()
 
 
 unit_withWorker_exception_can_be_caught :: Assertion
 unit_withWorker_exception_can_be_caught = do
     me <- myThreadId
-    handleAsync (\(_ :: WorkerExited) -> pass) $ throwTo me (WorkerExited "bye")
+    handleAsync (\(_ :: WorkerExited) -> pure ()) $ throwTo me (WorkerExited "bye")
 
 --------
 -- Now actual tests.
@@ -76,13 +78,13 @@ unit_withWorker_main_exit =
 -- | Main crashes -> worker is killed.
 unit_withWorker_main_crash :: Assertion
 unit_withWorker_main_crash =
-    withWorker_test (forever $ threadDelay 100) (throw TestException `catch` \TestException -> putText "Hi") >>=
+    withWorker_test (forever $ threadDelay 100) (throw TestException `catch` \TestException -> putStr "Hi") >>=
     assertWtr True False True
 
 -- | Worker exits -> main thread is killed.
 unit_withWorker_worker_exit :: Assertion
 unit_withWorker_worker_exit =
-    withWorker_test pass (threadDelay 100) >>=
+    withWorker_test (pure ()) (threadDelay 100) >>=
     assertWtr False True False
 
 -- | Worker crashes -> main thread is killed.
