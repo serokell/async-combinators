@@ -14,7 +14,7 @@ build-type:          Simple
 extra-source-files:  CHANGELOG.md
                    , README.md
 
-cabal-version:       >=1.10
+cabal-version:       2.0
 tested-with:         GHC == 8.0.2
                      GHC == 8.2.2
 
@@ -23,7 +23,7 @@ library
   exposed-modules:     Async.Combinators
   ghc-options:         -Wall
   build-depends:       base            >= 4.7 && < 5
-                     , async           >= 2.1 && < 2.2
+                     , async           >= 2.1 && < 2.3
                      , safe-exceptions >= 0.1.6 && < 0.2
                      , text
                      , unliftio-core   == 0.1.1.0
